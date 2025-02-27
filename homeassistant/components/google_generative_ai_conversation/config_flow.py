@@ -45,6 +45,7 @@ from .const import (
     CONF_TOP_K,
     CONF_TOP_P,
     DOMAIN,
+    RECOMMENDED_API_VERSION,
     RECOMMENDED_CHAT_MODEL,
     RECOMMENDED_HARM_BLOCK_THRESHOLD,
     RECOMMENDED_MAX_TOKENS,
@@ -79,6 +80,7 @@ async def validate_input(data: dict[str, Any]) -> None:
         config={
             "http_options": {
                 "timeout": TIMEOUT_MILLIS,
+                "api_version": RECOMMENDED_API_VERSION,
             },
             "query_base": True,
         }
@@ -244,7 +246,12 @@ async def google_generative_ai_config_option_schema(
     if options.get(CONF_RECOMMENDED):
         return schema
 
-    api_models_pager = await genai_client.aio.models.list(config={"query_base": True})
+    api_models_pager = await genai_client.aio.models.list(
+        config={
+            "query_base": True,
+            "http_options": {"api_version": RECOMMENDED_API_VERSION},
+        }
+    )
     api_models = [api_model async for api_model in api_models_pager]
     models = [
         SelectOptionDict(

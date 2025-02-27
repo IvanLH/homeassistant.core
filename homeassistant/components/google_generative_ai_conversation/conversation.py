@@ -13,6 +13,7 @@ from google.genai.types import (
     FunctionDeclaration,
     GenerateContentConfig,
     HarmCategory,
+    HttpOptions,
     Part,
     SafetySetting,
     Schema,
@@ -41,6 +42,7 @@ from .const import (
     CONF_TOP_P,
     DOMAIN,
     LOGGER,
+    RECOMMENDED_API_VERSION,
     RECOMMENDED_CHAT_MODEL,
     RECOMMENDED_HARM_BLOCK_THRESHOLD,
     RECOMMENDED_MAX_TOKENS,
@@ -389,6 +391,7 @@ class GoogleGenerativeAIConversationEntity(
             automatic_function_calling=AutomaticFunctionCallingConfig(
                 disable=True, maximum_remote_calls=None
             ),
+            http_options=HttpOptions(api_version=RECOMMENDED_API_VERSION),
         )
 
         if not supports_system_instruction:

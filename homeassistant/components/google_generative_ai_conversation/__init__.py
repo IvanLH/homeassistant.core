@@ -6,6 +6,7 @@ from pathlib import Path
 
 from google import genai  # type: ignore[attr-defined]
 from google.genai.errors import APIError, ClientError
+from google.genai.types import GenerateContentConfig, HttpOptions
 from requests.exceptions import Timeout
 import voluptuous as vol
 
@@ -31,6 +32,7 @@ from .const import (
     CONF_CHAT_MODEL,
     CONF_PROMPT,
     DOMAIN,
+    RECOMMENDED_API_VERSION,
     RECOMMENDED_CHAT_MODEL,
     TIMEOUT_MILLIS,
 )
@@ -87,9 +89,13 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
         await hass.async_add_executor_job(append_files_to_prompt)
 
+        config = GenerateContentConfig(
+            http_options=HttpOptions(api_version=RECOMMENDED_API_VERSION)
+        )
+
         try:
             response = await client.aio.models.generate_content(
-                model=RECOMMENDED_CHAT_MODEL, contents=prompt_parts
+                model=RECOMMENDED_CHAT_MODEL, contents=prompt_parts, config=config
             )
         except (
             APIError,
